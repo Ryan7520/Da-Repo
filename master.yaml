@@ -1,37 +1,57 @@
+---
 openapi: 3.0.0
 info:
-  version: 0.0-oas3
-  title: cpuinfo
-  description: >-
-    A simple service to get cpuinfo as an example of using swagger-2.0
-    specification and codegen
-  termsOfService: 'http://swagger.io/terms/'
+  title: Heart Attack Prediction
+  description: A Model that will decided if given datapoints of a person are likely to have a heart attack
   contact:
-    name: Cloudmesh REST Service Example
-  license:
-    name: Apache
+    name: Ryan Herrington
+  version: 0.0-oas3
+servers:
+- url: http://localhost:8080/
 paths:
-  /cpu:
+  /predict/{data}:
     get:
       tags:
-        - CPU
-      operationId: os_pack.cpu_2020.get_processor_name
-      description: Returns cpu information of the hosting server
+      - CLASSIFY
+      description: This is the input from the user, and should be sent in as an array to the model.
+      operationId: model_file.predict
+      parameters:
+      - name: data
+        in: path
+        required: true
+        style: simple
+        explode: true
+        schema:
+          minItems: 1
+          type: array
+          items:
+            type: number
+      - name: metadata
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
       responses:
-        '200':
-          description: 'CPU info, or add more text'
+        "200":
+          description: This is what returns the result of the prediction to the user
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CPU'
-servers:
-  - url: 'http://localhost:8080/engr-222'
+                $ref: '#/components/schemas/CLASSIFY'
+        "500":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CLASSIFY'
 components:
   schemas:
-    CPU:
-      type: object
+    CLASSIFY:
       required:
-        - model
+      - model
+      type: object
       properties:
         model:
           type: string
